@@ -1,0 +1,85 @@
+<view class="page browse-page">
+  <view class="browse-title-bar">
+    <text class="browse-title">B站字幕获取、AI分析</text>
+  </view>
+
+  <view class="card input-card">
+    <input class="bvid-input" placeholder="输入 BV 号或链接" placeholder-class="bvid-placeholder" value="{{bvid}}" bindinput="onBvidInput" confirm-type="search" bindconfirm="onFetch" />
+    <button class="btn btn-primary btn-shine fetch-btn" bindtap="onFetch" loading="{{loading}}" disabled="{{loading}}">获取</button>
+  </view>
+
+  <view wx:if="{{credentialTip}}" class="credential-tip" bindtap="goSettings">
+    <text class="credential-tip-text">{{credentialTip}}</text>
+    <text class="credential-tip-arrow">›</text>
+  </view>
+
+  <view wx:if="{{error}}" class="error-tip">{{error}}</view>
+
+  <view wx:if="{{loading && !subtitles.length}}" class="loading-row">
+    <view class="spinner"></view>
+    <text class="loading-text">正在获取视频信息...</text>
+  </view>
+
+  <view wx:if="{{videoInfo}}" class="card video-info-card">
+    <view class="video-title">{{videoInfo.title}}</view>
+    <view class="video-meta">
+      <text class="meta-item">BV: {{bvid}}</text>
+      <text class="meta-divider">|</text>
+      <text class="meta-item">{{subBody.length}} 条字幕</text>
+      <text class="meta-divider">|</text>
+      <text class="meta-item">{{commentCount}} 条评论</text>
+    </view>
+    <view wx:if="{{videoInfo.desc}}" class="video-desc">{{videoInfo.desc}}</view>
+    <view wx:if="{{videoInfo.tags.length}}" class="video-tags">
+      <text wx:for="{{videoInfo.tags}}" wx:key="*this" class="vtag">{{item}}</text>
+    </view>
+    <view wx:if="{{commentError}}" class="comment-error-tip">评论: {{commentError}}</view>
+  </view>
+
+  <view wx:if="{{subtitles.length}}" class="source-section">
+    <view class="source-header" bindtap="toggleSource">
+      <text class="source-label">字幕选择 ({{subtitles.length}})</text>
+      <text class="source-current">{{selectedLang}}</text>
+      <view class="source-arrow {{sourceCollapsed ? 'collapsed' : ''}}">
+        <text class="arrow-text">▾</text>
+      </view>
+    </view>
+    <view wx:if="{{!sourceCollapsed}}" class="source-body">
+      <view wx:for="{{subtitles}}" wx:key="id" class="sub-chip {{selectedId === item.id ? 'sub-chip-active' : ''}}" data-id="{{item.id}}" bindtap="onSelect">
+        <text class="sub-chip-text">{{item.lan_doc}}</text>
+        <text class="tag {{item.isAI ? 'tag-ai' : 'tag-cc'}}">{{item.isAI ? 'AI' : 'CC'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showEmpty}}" class="card">
+    <view class="empty-state">
+      <text>该视频暂无可用字幕</text>
+      <text class="empty-hint">AI 字幕需登录，请在设置页填 SESSDATA</text>
+    </view>
+  </view>
+
+  <view wx:if="{{subBody.length}}" class="subtitle-browse">
+    <view class="sub-actions">
+      <button class="btn btn-primary btn-shine ai-btn" bindtap="goAI">AI 分析</button>
+      <button class="btn btn-secondary copy-all-btn {{copyOk ? 'copy-all-ok' : ''}}" bindtap="onCopy">{{copyOk ? '已复制' : '复制全部'}}</button>
+    </view>
+    <view class="sub-search-row">
+      <input class="search-input" placeholder="搜索字幕内容..." placeholder-class="search-placeholder" value="{{keyword}}" bindinput="onSearch" />
+    </view>
+
+    <scroll-view scroll-y class="sub-scroll" scroll-top="{{scrollTop}}" enhanced bounces>
+      <view class="sub-list">
+        <view wx:for="{{filtered}}" wx:key="index" class="sub-item">
+          <view class="sub-time">{{item.from}} → {{item.to}}</view>
+          <view class="sub-content">
+            <text wx:for="{{item.segments}}" wx:for-item="seg" wx:key="index" class="{{seg.highlight ? 'seg-highlight' : ''}}">{{seg.text}}</text>
+          </view>
+        </view>
+        <view wx:if="{{!filtered.length}}" class="empty-state">
+          <text>无匹配字幕</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</view>

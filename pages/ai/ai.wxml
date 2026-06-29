@@ -1,0 +1,68 @@
+<view class="page ai-page">
+  <view class="ai-header glass-panel">
+    <view class="ai-header-inner">
+      <view class="ai-title">{{videoTitle}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{error}}" class="error-tip">{{error}}</view>
+
+  <view wx:if="{{!hasResult && !streaming}}" class="ai-empty">
+    <button class="btn btn-primary btn-shine ai-gen-btn" bindtap="onGenerate">
+      <text>AI 分析</text>
+    </button>
+    <view class="ai-hint">AI 生成内容可能有误，请核查</view>
+  </view>
+
+  <scroll-view wx:if="{{hasResult || streaming}}" scroll-y class="ai-scroll" scroll-top="{{scrollTop}}" scroll-with-animation="{{!streaming}}" enhanced bounces>
+    <view class="ai-content">
+      <block wx:if="{{!showRaw}}">
+        <view class="ai-result-card">
+          <view wx:if="{{hasResult}}" class="retry-corner" bindtap="onGenerate">
+            <text class="retry-icon">↻</text>
+          </view>
+          <rich-text class="markdown" nodes="{{nodes}}"></rich-text>
+          <view wx:if="{{streaming}}" class="streaming-indicator">
+            <view class="pulse-dot"></view>
+            <text>生成中，请耐心等候...</text>
+          </view>
+        </view>
+      </block>
+
+      <block wx:if="{{showRaw}}">
+        <view class="raw-section">
+          <view class="raw-label">发给AI的原始提示词：</view>
+          <view class="raw-box raw-prompt">{{rawPrompt}}</view>
+          <view class="raw-label">AI返回的原始文本：</view>
+          <view class="raw-box raw-response">{{fullText}}</view>
+        </view>
+      </block>
+
+      <view wx:if="{{hasResult}}" class="qa-section">
+        <view class="qa-divider"></view>
+        <view class="qa-box">
+          <view class="qa-label">追问</view>
+          <view wx:for="{{qaList}}" wx:key="index" class="qa-card">
+            <view class="qa-question">Q：{{item.question}}</view>
+            <rich-text wx:if="{{item.nodes.length}}" class="markdown qa-answer" nodes="{{item.nodes}}"></rich-text>
+            <view wx:elif="{{item.streaming}}" class="streaming-indicator"><view class="pulse-dot"></view></view>
+            <view wx:else class="qa-answer-raw">{{item.answer}}</view>
+          </view>
+          <view class="ask-row">
+            <input class="ask-input" placeholder="输入追问..." placeholder-class="ask-placeholder" value="{{askText}}" bindinput="onAskInput" confirm-type="send" bindconfirm="onSendAsk" />
+            <button class="btn btn-primary send-btn" bindtap="onSendAsk" disabled="{{streaming}}">发送</button>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{hasResult && !streaming}}" class="bottom-bar">
+        <label class="raw-checkbox" bindtap="toggleRaw">
+          <view class="checkbox-box {{showRaw ? 'checked' : ''}}">
+            <text wx:if="{{showRaw}}" class="check-mark">✓</text>
+          </view>
+          <text class="checkbox-text">查看原始文本</text>
+        </label>
+      </view>
+    </view>
+  </scroll-view>
+</view>

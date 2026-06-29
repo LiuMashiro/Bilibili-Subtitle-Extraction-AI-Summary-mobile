@@ -1,0 +1,31 @@
+{
+  "description": "B站字幕小程序（云函数版）",
+  "miniprogramRoot": "./",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": false,
+    "newFeature": true,
+    "autoAudits": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": true,
+    "useIsolateContext": true,
+    "useCompilerPlugins": false
+  },
+  "compileType": "miniprogram",
+  "libVersion": "2.2.3",
+  "appid": "touristappid",
+  "projectname": "bili-sub",
+  "condition": {},
+  "editorSetting": { "tabIndent": "insertSpaces", "tabSize": 2 },
+  "packOptions": {
+    "ignore": [
+      { "type": "folder", "value": "test" },
+      { "type": "folder", "value": "tests" }
+    ]
+  }
+}

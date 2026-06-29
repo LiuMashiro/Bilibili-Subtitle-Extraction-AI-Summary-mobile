@@ -1,0 +1,32 @@
+{
+  "pages": [
+    "pages/browse/browse",
+    "pages/ai/ai",
+    "pages/settings/settings"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "@navBgColor",
+    "navigationBarTitleText": "B站字幕助手",
+    "navigationBarTextStyle": "@navTxtStyle",
+    "backgroundColor": "@bgColor",
+    "backgroundColorTop": "@bgColorTop",
+    "backgroundColorBottom": "@bgColorBottom"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#94A3B8",
+    "selectedColor": "#00AEEC",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/browse/browse", "text": "浏览" },
+      { "pagePath": "pages/ai/ai", "text": "AI" },
+      { "pagePath": "pages/settings/settings", "text": "设置" }
+    ]
+  },
+  "darkmode": true,
+  "themeLocation": "theme.json",
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "cloud": true
+}

@@ -1,0 +1,188 @@
+<view class="page settings-page">
+
+  <!-- ====== 基础凭证 ====== -->
+  <view class="settings-group">
+    <view class="group-header">基础凭证（必须完成）</view>
+    <view class="grouped-list">
+      <view class="grouped-row stacked">
+        <view class="row-label-inline">
+          <text class="row-label">云开发环境 ID</text>
+          <text class="tutorial-btn" bindtap="toggleEnvTutorial">{{showEnvTutorial ? '收起' : '查看教程'}}</text>
+        </view>
+        <input class="settings-input" value="{{settings.envId}}" bindinput="onEnvIdInput" placeholder=" 名称-xxxxx" placeholder-class="input-placeholder" />
+        <view wx:if="{{showEnvTutorial}}" class="tutorial-box">
+          <text class="tutorial-title">如何获取环境 ID：</text>
+          <text class="tutorial-step">1. 打开微信开发者工具</text>
+          <text class="tutorial-step">2. 点击顶部右侧「云开发」（云朵状）按钮</text>
+          <text class="tutorial-step">3. 创建或选择环境，名称任意（注意：保持在测试期可以免费使用）</text>
+          <text class="tutorial-step">4. 复制环境 ID（形如 名称-xxxxx）</text>
+          <text class="tutorial-step">5. 粘贴到上方输入框</text>
+          <text class="tutorial-step">6.在左侧找到 cloudfunctions/biliProxy 文件夹，右键选择“上传并部署：云端安装依赖（不上传node_modules）”</text>
+        </view>
+      </view>
+      <view class="grouped-row stacked">
+        <view class="row-label-inline">
+          <text class="row-label">SESSDATA</text>
+          <text class="tutorial-btn" bindtap="toggleSessTutorial">{{showSessTutorial ? '收起' : '查看教程'}}</text>
+        </view>
+        <input class="settings-input" password value="{{settings.sessdata}}" bindinput="onSessdataInput" placeholder="浏览器 Cookie 中的 SESSDATA" placeholder-class="input-placeholder" />
+        <view wx:if="{{showSessTutorial}}" class="tutorial-box">
+          <text class="tutorial-title">如何获取 SESSDATA：</text>
+          <text class="tutorial-step">1. 在浏览器登录 bilibili.com</text>
+          <text class="tutorial-step">2. 按 F12 打开开发者工具</text>
+          <text class="tutorial-step">3. Application（应用） → Cookie → message.bilibili.com</text>
+          <text class="tutorial-step">4. 找到 SESSDATA，复制其值</text>
+          <text class="tutorial-step">5. 粘贴到上方输入框</text>
+          <text class="tutorial-warn">SESSDATA 约 6 个月有效，过期后需重新获取</text>
+        </view>
+      </view>
+      <view class="grouped-row stacked" bindtap="toggleDomainTutorial">
+        <view class="row-label-inline">
+          <text class="row-label">配置 request 白名单</text>
+          <text class="tutorial-btn">{{showDomainTutorial ? '收起' : '查看教程'}}</text>
+        </view>
+        <text class="row-desc">真机调试需配置 AI 平台域名白名单</text>
+      </view>
+      <view wx:if="{{showDomainTutorial}}" class="tutorial-box tutorial-large">
+        <text class="tutorial-title tutorial-mt">第一步：添加 request 合法域名</text>
+        <text class="tutorial-step">1. 登录微信公众平台 (mp.weixin.qq.com)</text>
+        <text class="tutorial-step">2. 进入「开发管理 → 开发设置 → 服务器域名」</text>
+        <text class="tutorial-step">3. 在 request 合法域名列表中按需添加以下地址（不支持境外AI地址）：</text>
+        <text class="tutorial-domain">https://api.deepseek.com</text>
+        <text class="tutorial-domain-desc">DeepSeek 地址</text>
+        <text class="tutorial-domain">https://open.bigmodel.cn</text>
+        <text class="tutorial-domain-desc">智谱 GLM 地址</text>
+        <text class="tutorial-domain">https://ark.cn-beijing.volces.com</text>
+        <text class="tutorial-domain-desc">火山方舟（豆包）地址</text>
+        <text class="tutorial-step tutorial-mt">4. 每月可修改 50 次，修改后需重新编译</text>
+        <text class="tutorial-warn">注意：域名需以 https:// 开头，仅填域名部分（不含路径）</text>
+
+        <text class="tutorial-title tutorial-mt">第二步：预览</text>
+        <text class="tutorial-step">若需在真机预览，必须完成第二步的白名单配置</text>
+        <text class="tutorial-step">然后，选择顶部预览-自动预览，向手机推送</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ====== API 设置 ====== -->
+  <view class="settings-group">
+    <view class="group-header">API 设置</view>
+    <view class="grouped-list">
+      <picker mode="selector" range="{{platforms}}" value="{{platformIndex}}" bindchange="onPlatformChange">
+        <view class="grouped-row">
+          <text class="row-label">平台 / 供应商</text>
+          <text class="row-value">{{platforms[platformIndex]}}</text>
+          <view class="chevron"></view>
+        </view>
+      </picker>
+      <view class="grouped-row link-row" bindtap="copyLink">
+        <text class="row-label">获取 API Key</text>
+        <view class="chevron"></view>
+      </view>
+      <view wx:if="{{showUrlInput}}" class="grouped-row stacked">
+        <text class="stack-label">API URL Endpoint</text>
+        <input class="settings-input" value="{{settings.apiUrl}}" bindinput="onApiUrlInput" placeholder="接口地址" placeholder-class="input-placeholder" />
+      </view>
+      <picker mode="selector" range="{{models}}" value="{{modelIndex}}" bindchange="onModelChange">
+        <view class="grouped-row">
+          <text class="row-label">模型</text>
+          <text class="row-value">{{models[modelIndex]}}</text>
+          <view class="chevron"></view>
+        </view>
+      </picker>
+      <view wx:if="{{showCustomModel}}" class="grouped-row stacked">
+        <text class="stack-label">自定义模型名称</text>
+        <input class="settings-input" value="{{settings.customModel}}" bindinput="onCustomModelInput" placeholder="输入模型名..." placeholder-class="input-placeholder" />
+      </view>
+      <view class="grouped-row stacked">
+        <text class="stack-label">API Key</text>
+        <input class="settings-input" password value="{{settings.apiKey}}" bindinput="onApiKeyInput" placeholder="sk-..." placeholder-class="input-placeholder" />
+        <text class="row-desc">本程序不会上传 API Key，请勿泄露</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ====== AI 分析 ====== -->
+  <view class="settings-group">
+    <view class="group-header">AI 分析</view>
+    <view class="grouped-list">
+      <picker mode="selector" range="{{detailLevels}}" range-key="label" value="{{detailIndex}}" bindchange="onDetailChange">
+        <view class="grouped-row">
+          <text class="row-label">详细程度</text>
+          <text class="row-value">{{detailLevels[detailIndex].label}}</text>
+          <view class="chevron"></view>
+        </view>
+      </picker>
+      <view class="grouped-row">
+        <text class="row-label">自动 AI 分析</text>
+        <switch checked="{{settings.autoAIAnalysis}}" bindchange="onAutoAIChange" color="#00AEEC" />
+      </view>
+      <view class="grouped-row">
+        <text class="row-label">启用二次确认</text>
+        <switch checked="{{settings.confirmBeforeAI}}" bindchange="onConfirmBeforeAIChange" color="#00AEEC" />
+      </view>
+      <view wx:if="{{settings.confirmBeforeAI}}" class="grouped-row stacked confirm-desc-row">
+        <text class="row-desc">启用后，当字数超过限制时，AI 分析前将向您二次确认，以免浪费 Tokens。</text>
+      </view>
+      <view wx:if="{{settings.confirmBeforeAI}}" class="grouped-row stacked">
+        <text class="stack-label">二次确认字数阈值</text>
+        <input class="settings-input" type="number" value="{{settings.confirmThreshold}}" bindinput="onConfirmThresholdInput" placeholder-class="input-placeholder" />
+      </view>
+    </view>
+  </view>
+
+  <!-- ====== 舆情分析 ====== -->
+  <view class="settings-group">
+    <view class="group-header">舆情分析</view>
+    <view class="grouped-list">
+      <view class="grouped-row">
+        <text class="row-label">舆论分析</text>
+        <switch checked="{{settings.opinionAnalysis}}" bindchange="onOpinionChange" color="#00AEEC" />
+      </view>
+      <view class="grouped-row stacked">
+        <text class="stack-label">获取评论数上限</text>
+        <input class="settings-input" type="number" value="{{settings.opinionCommentsCount}}" bindinput="onCommentCountInput" placeholder-class="input-placeholder" />
+        <text class="row-desc">获取的评论数可能会小于但不会超过此限制</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ====== AI 评价 ====== -->
+  <view class="settings-group">
+    <view class="group-header">AI 评价</view>
+    <view class="grouped-list">
+      <view class="grouped-row stacked">
+        <view class="row-label-inline">
+          <text class="row-label">AI 评价</text>
+          <switch checked="{{settings.aiEvaluation}}" bindchange="onEvaluationChange" color="#00AEEC" />
+        </view>
+        <text class="row-desc">AI 将在总结后给出自己的评价，仅供参考</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ====== 关于 ====== -->
+  <view class="settings-group">
+    <view class="group-header">关于</view>
+    <view class="grouped-list">
+      <view class="grouped-row link-row" bindtap="copyGitHub">
+        <text class="row-label">GitHub</text>
+        <view class="chevron"></view>
+      </view>
+      <view class="grouped-row link-row" bindtap="copyPC">
+        <view class="row-label-inline" style="flex:1;">
+          <text class="row-label">推荐尝试 PC 端油猴脚本</text>
+        </view>
+        <view class="chevron"></view>
+      </view>
+      <view class="grouped-row link-row" bindtap="copyLegal">
+        <text class="row-label">法律说明</text>
+        <view class="chevron"></view>
+      </view>
+      <view class="grouped-row about-row">
+        <text class="about-text">作者: LiuMashiro · 当前版本: v0.1.0（早期测试）</text>
+      </view>
+    </view>
+  </view>
+
+</view>
