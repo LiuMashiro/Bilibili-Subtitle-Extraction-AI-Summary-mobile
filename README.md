@@ -1,6 +1,6 @@
 # B站字幕获取、AI分析工具 移动端
 
-**Bilibili-Subtitle-Extraction-AI-Summary-**
+**Bilibili-Subtitle-Extraction-AI-Summary-mobile**
 
 实现字幕提取、AI内容总结（并可追问）并依据评论区热门评论进行舆情分析。
 
